@@ -7,8 +7,10 @@ import Rank from './components/Rank/Rank';
 import FaceDetection from './components/FaceDetection/FaceDetection';
 import Particles from 'react-particles-js';
 import SignInForm from './components/SignInForm/SignInForm.js';
+import Register from './components/Register/Register.js';
 import './App.css';
 import Clarifai from 'clarifai';
+//import { exportDefaultSpecifier } from '@babel/types';
 
 const app = new Clarifai.App ({
   apiKey : '315e2150065d47c9adfdc55fd2aecc90'
@@ -33,7 +35,8 @@ class App extends Component {
       value:'',
       imageURL:'',
       box:'',
-      route : 'signin'
+      route : 'signin',
+      isSignedin:false
     }
   }
   calculateFaceLocation = (data)=>{
@@ -69,6 +72,11 @@ class App extends Component {
   }
 
   onRouteChange = (route)=>{
+    if(route === 'home'){
+      this.setState({isSignedin:true})
+    }else{
+      this.setState({isSignedin:false})
+    }
     this.setState({route: route});
   }
 
@@ -77,21 +85,23 @@ class App extends Component {
       <div className="App">
       <Particles className = 'particles'
       params={particlesOptions} />
-        <Navigation onRouteChange = {this.onRouteChange} />
-        {   this.state.route === 'signin'?<SignInForm onRouteChange = {this.onRouteChange} />
-            :<div>
+        <Navigation onRouteChange = {this.onRouteChange} isSignedin = {this.state.isSignedin} />
+        {   this.state.route === 'home'?
+            <div>
                 <Logo />
                 <Rank />
                 <ImageLinkForm onInputChange={this.onInputChange} onButtonPress={this.onButtonPress}/>
                 <FaceDetection URL = {this.state.imageURL} box = {this.state.box} />
             </div>
-            
-        }
-        
+            :(
+                this.state.route === 'signin'?
+                <SignInForm onRouteChange = {this.onRouteChange} />
+                :<Register onRouteChange = {this.onRouteChange} />
+            )
+        }       
       </div>
-    );
-  }
-  
+    );  
+}
 }
 
 export default App;
