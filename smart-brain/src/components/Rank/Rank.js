@@ -1,14 +1,14 @@
 import React from 'react';
 //import './ImageLinkForm.css';
 
-function Rank(){
+function Rank({name,entries}){
     return (
         <div>
             <div className = 'white f3'>
-                {'Hey Ronit,Your rank is '}
+                {`Hey ${name},Your rank is... `}
             </div>
             <div className = 'white f1'>
-                {'#5'}
+                {`${entries}`}
             </div>
         </div>
     );

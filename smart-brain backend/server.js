@@ -1,9 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors')
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 const database = {
     users:[
@@ -30,14 +33,20 @@ app.get('/',(req,res)=>{
     res.json(database);
 })
 app.post('/signin',(req,res)=>{
+    //const a =  JSON.parse(req.body);        
+
     if(req.body.email === database.users[0].email  
         && req.body.password === database.users[0].password){
-            res.json("yippeeee!!!! success");
+            res.json('success');
         }else{
-            res.status(400).json("errrorrr!! loging in");
+            res.json("access denied");
         }
 })
 app.post('/register',(req,res)=>{
+    // bcrypt.hash(req.body.password, null, null, function(err, hash) {
+    //     // Store hash in your password DB.
+    //     console.log(hash);
+    // });
     database.users.push(
         {
             id : req.body.id,
@@ -48,7 +57,8 @@ app.post('/register',(req,res)=>{
             date: new Date()
         }
     );
-    res.json(database);
+
+    res.json(database.users[database.users.length - 1]);
 })
 app.get('/profile/:id',(req,res)=>{
     database.users.forEach(user=>{
@@ -62,11 +72,13 @@ app.put('/image',(req,res)=>{
     database.users.forEach(user=>{
         if(user.id == req.body.id){
             user.entries++;
-            res.json(user);
+            res.json(user.entries);
         }
     })
     res.status(404).json("not found fuckofffff!!");
 })
+
+
 app.listen(3000,()=>{
     console.log("app is running perfectly");
 })
@@ -79,3 +91,9 @@ app.listen(3000,()=>{
 /profile-->GET=user
 /image-->PUT
 */
+// bcrypt.compare("bacon", $2a$10$ss0RG3w4qTArq8x5aru68ebOnqm/XGqbGZ4Z7MFQr4VB35p.YSQmO, function(err, res) {
+        //     // res == true
+        // });
+        // bcrypt.compare("veggies", $2a$10$ss0RG3w4qTArq8x5aru68ebOnqm/XGqbGZ4Z7MFQr4VB35p.YSQmO, function(err, res) {
+        //     // res = false
+        // });

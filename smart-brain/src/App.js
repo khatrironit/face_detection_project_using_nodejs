@@ -36,8 +36,29 @@ class App extends Component {
       imageURL:'',
       box:'',
       route : 'signin',
-      isSignedin:false
+      isSignedin:false,
+      userinfo : {
+        id : '',
+        name: '',
+        email: '',
+        entries: 0,
+        date: ''
     }
+    }
+  }
+  // componentDidMount(){
+  //   fetch('http://localhost:3000/')
+  //   .then(response=>response.json())
+  //   .then(console.log);
+  // }
+  loadUser = (data)=>{
+    this.setState({ userinfo:{
+      id : data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      date: data.date
+  }});
   }
   calculateFaceLocation = (data)=>{
       const claraiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -67,17 +88,33 @@ class App extends Component {
     
     app.models.predict(Clarifai.FACE_DETECT_MODEL,
        this.state.value)
-       .then(response=> this.displayFace(this.calculateFaceLocation(response)))
+       .then(response=> {
+        if(response){
+          fetch('http://localhost:3000/image',{
+            method:'put',
+            headers:{'Content-Type':'appilcation/json'},
+            body: JSON.stringify({
+              id:this.state.userinfo.id
+            })
+          }).then(response => response.json())
+          .then(count=>{
+            console.log(count);
+            this.setState(Object.assign(this.state.userinfo,{entries : count}));
+          })
+          
+        } 
+        return this.displayFace(this.calculateFaceLocation(response));
+       })
       .catch(error=> console.log(error));
   }
 
-  onRouteChange = (route)=>{
-    if(route === 'home'){
-      this.setState({isSignedin:true})
-    }else{
+  onRouteChange = (rout)=>{
+    if(rout === 'signin'){
       this.setState({isSignedin:false})
+    }else if(rout === 'home'){
+      this.setState({isSignedin:true})
     }
-    this.setState({route: route});
+    this.setState({route: rout});
   }
 
   render(){
@@ -89,14 +126,14 @@ class App extends Component {
         {   this.state.route === 'home'?
             <div>
                 <Logo />
-                <Rank />
+                <Rank name = {this.state.userinfo.name} entries ={this.state.userinfo.entries}/>
                 <ImageLinkForm onInputChange={this.onInputChange} onButtonPress={this.onButtonPress}/>
                 <FaceDetection URL = {this.state.imageURL} box = {this.state.box} />
             </div>
             :(
                 this.state.route === 'signin'?
-                <SignInForm onRouteChange = {this.onRouteChange} />
-                :<Register onRouteChange = {this.onRouteChange} />
+                <SignInForm loadUser = {this.loadUser} onRouteChange = {this.onRouteChange} />
+                :<Register loadUser = {this.loadUser} onRouteChange = {this.onRouteChange} />
             )
         }       
       </div>
