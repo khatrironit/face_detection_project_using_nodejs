@@ -103,7 +103,7 @@ class App extends Component {
           })
           
         } 
-        return this.displayFace(this.calculateFaceLocation(response));
+       this.displayFace(this.calculateFaceLocation(response));
        })
       .catch(error=> console.log(error));
   }

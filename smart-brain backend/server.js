@@ -37,9 +37,9 @@ app.post('/signin',(req,res)=>{
 
     if(req.body.email === database.users[0].email  
         && req.body.password === database.users[0].password){
-            res.json('success');
+            res.json(true);
         }else{
-            res.json("access denied");
+            res.json(false);
         }
 })
 app.post('/register',(req,res)=>{
@@ -97,3 +97,4 @@ app.listen(3000,()=>{
         // bcrypt.compare("veggies", $2a$10$ss0RG3w4qTArq8x5aru68ebOnqm/XGqbGZ4Z7MFQr4VB35p.YSQmO, function(err, res) {
         //     // res = false
         // });
+        //https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs2ck6aWpUG4m6dnbTGI_cWKPpDSwbcAk3pFeQ86KTOQWuwZVz&s

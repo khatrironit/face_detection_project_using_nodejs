@@ -29,8 +29,9 @@ class SignInForm extends React.Component {
             })
         }).then(response =>response.json())
         .then(response =>{
-            if(response === 'success'){
-                this.props.loadUser(response);
+            if(response){
+                //console.log(response);
+                //this.props.loadUser(response);
                 this.props.onRouteChange('home');
             }
         })
